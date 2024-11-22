@@ -1,7 +1,7 @@
 {
   "name": "bun-plugin-vue3",
   "description": "a Bun plugin for Vue 3",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "module": "src/index.ts",
   "type": "module",
   "devDependencies": {

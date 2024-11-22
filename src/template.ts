@@ -6,6 +6,10 @@ export function resolveTemplate(filename: string, options: any['templateOptions'
 
   let { code, errors, map } = compileTemplate(getTemplateOptions(descriptor, options, isProd))
 
+  // if (map) {
+  //   code += convert.fromObject(map).toComment()
+  // }
+
   const convertedErrors: any[] = errors.map(e => {
     if (typeof e === 'string') {
       return {

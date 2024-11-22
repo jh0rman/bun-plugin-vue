@@ -1,5 +1,4 @@
-import { plugin, type BunPlugin, type Loader } from "bun"
-import { randomBytes as _randomBytes, createHash } from 'crypto'
+import { plugin, type BunPlugin } from "bun"
 import fs from 'fs/promises'
 import { resolvePath, validateDependency } from "./util"
 import { loadEntry } from "./entry"
@@ -25,12 +24,20 @@ export function pluginVue3(): BunPlugin {
         }
       })
 
+      // build.onResolve({ filter: /\.vue\?type=script/ }, args => {
+      //   return {
+      //     path: args.path,
+      //     namespace
+      //   }
+      // })
+
+      // build.onLoad({ filter: /.*/, namespace }, args => {
       build.onLoad({ filter: /\.vue\?type=script/ }, args => {
         const [filename, dirname] = resolvePath(args.path)
         const { code, error, isTs } = resolveScript(
           filename,
-          undefined,
-          undefined,
+          undefined, // scriptOptions,
+          undefined, //templateOptions,
           isProd
         )
         return {
@@ -41,11 +48,19 @@ export function pluginVue3(): BunPlugin {
         }
       })
 
+      // build.onResolve({ filter: /\.vue\?type=template/ }, args => {
+      //   return {
+      //     path: args.path,
+      //     namespace: 'vue-template'
+      //   }
+      // })
+
+      // build.onLoad({ filter: /.*/, namespace: 'vue-template' }, args => {
       build.onLoad({ filter: /\.vue\?type=template/ }, args => {
         const [filename, dirname] = resolvePath(args.path)
         const { code, errors } = resolveTemplate(
           filename,
-          undefined,
+          undefined, // templateOptions,
           isProd
         )
         return {
@@ -56,13 +71,21 @@ export function pluginVue3(): BunPlugin {
         }
       })
 
+      // build.onResolve({ filter: /\.vue\?type=style/ }, args => {
+      //   return {
+      //     path: args.path,
+      //     namespace: 'vue-style'
+      //   }
+      // })
+
+      // build.onLoad({ filter: /.*/, namespace: 'vue-style' }, async args => {
       build.onLoad({ filter: /\.vue\?type=style/ }, async args => {
         const [filename, dirname, query] = resolvePath(args.path)
         const { index, isModule, isNameImport } = parse2(query)
         const moduleWithNameImport = !!(isModule && isNameImport)
         const { styleCode, errors } = await resolveStyle(
           filename,
-          undefined,
+          undefined, //styleOptions,
           Number(index),
           !!isModule,
           moduleWithNameImport,
@@ -72,7 +95,7 @@ export function pluginVue3(): BunPlugin {
           contents: styleCode,
           errors,
           resolveDir: dirname,
-          loader: moduleWithNameImport ? 'json' : 'json'
+          loader: moduleWithNameImport ? 'json' : 'json' // 'css'
         }
       })
     },

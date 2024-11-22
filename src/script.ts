@@ -19,22 +19,28 @@ export function resolveScript(
     return { code }
   }
 
-  const scopeId = getId(filename)
+  const scopeId = getId(filename) // manejar el getDesCache, sí lo necesitamos
   try {
     const res = compileScript(descriptor, {
       id: scopeId,
       isProd,
+      // sourceMap: sourcemap,
       inlineTemplate: true,
+      // babelParserPlugins: scriptOptions.babelParserPlugins,
+      // refTransform: true,
+      // refSugar: scriptOptions.refSugar,
       templateOptions: descriptor.template ? getTemplateOptions(descriptor, templateOptions, isProd) : {},
       fs: ts.sys
     })
     code = res.content
+    // if (res.map) {
+    //   code += convert.fromObject(res.map).toComment()
+    // }
   } catch (e: any) {
     error.push({
       text: e.message
     })
   }
-  console.log('code ->', code)
 
   return {
     code,

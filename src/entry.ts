@@ -13,6 +13,7 @@ export function loadEntry(source: string, filename: string) {
 
   let templateImportCode = ''
   let templateBindCode = ''
+  // scriptSetup inlineTemplate
   if (!descriptor.scriptSetup && descriptor.template) {
     const templatePath = JSON.stringify(`${filename}?type=template`)
     templateImportCode += `import { render } from ${templatePath}`
@@ -25,9 +26,11 @@ export function loadEntry(source: string, filename: string) {
     const stylePath = `${filename}?type=style&index=${i}`
     if (styleBlock.module) {
       if (!hasModuleInject) {
+        // expose cssModules to script
         styleImportCode += `\nscript.__cssModules = cssModules = {}`
         hasModuleInject = true
       }
+      // <style module="someName">
       const moduleName = typeof styleBlock.module === 'string' ? styleBlock.module : '$style'
       const importVarName = `__style${i}`
       styleImportCode += `\nimport ${importVarName} from ${JSON.stringify(
@@ -36,6 +39,7 @@ export function loadEntry(source: string, filename: string) {
       styleImportCode += `\ncssModules[${JSON.stringify(moduleName)}] = ${importVarName}`
       styleImportCode += `\nimport ${JSON.stringify(`${stylePath}&isModule=true`)}`
     } else {
+      // css file import
       styleImportCode += `\nimport ${JSON.stringify(stylePath)}`
     }
   })
@@ -60,5 +64,6 @@ export function loadEntry(source: string, filename: string) {
 
   return {
     code,
+    // errors: convertErrors(errors, filename)
   }
 }

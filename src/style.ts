@@ -30,11 +30,16 @@ export async function resolveStyle(
   })
   let styleCode: string
   if (moduleWithNameImport) {
+    // css-modules JSON file
     styleCode = JSON.stringify(res.modules!)
   } else {
+    // normal css content
     styleCode = res.code
   }
 
+  // if (res.map && !moduleWithNameImport) {
+  //   styleCode += convert.fromObject(res.map).toComment({ multiline: true })
+  // }
   const errors: any[] = res.errors.map(e => ({
     text: e.message
   }))
