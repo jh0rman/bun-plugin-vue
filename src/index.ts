@@ -1,12 +1,13 @@
-import { plugin, type BunPlugin, type Loader } from "bun"
-import { randomBytes as _randomBytes, createHash } from 'crypto'
-import fs from 'fs/promises'
+import { type BunPlugin } from "bun"
+import { randomBytes as _randomBytes } from 'node:crypto'
+import fs from 'node:fs/promises'
+import { resolve } from 'node:path'
+import { parse as parse2 } from "node:querystring"
 import { resolvePath, validateDependency } from "./util"
 import { loadEntry } from "./entry"
 import { resolveScript } from "./script"
 import { resolveTemplate } from "./template"
 import { resolveStyle } from "./style"
-import { parse as parse2 } from "querystring"
 
 validateDependency()
 
@@ -15,6 +16,12 @@ export function pluginVue3(): BunPlugin {
     name: "vue loader",
     setup(build) {
       const isProd = process.env.NODE_ENV === "production"
+
+      build.onResolve({ filter: /\.vue(\?.*)?$/ }, args => {
+        return {
+          path: resolve(args.resolveDir, args.path),
+        }
+      })
 
       build.onLoad({ filter: /\.vue$/ }, async args => {
         const filename = args.path
@@ -79,4 +86,4 @@ export function pluginVue3(): BunPlugin {
   }
 }
 
-export default plugin(pluginVue3())
+export default pluginVue3()
