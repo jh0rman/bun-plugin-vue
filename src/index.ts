@@ -9,12 +9,63 @@ import { resolveScript } from "./script"
 import { resolveTemplate } from "./template"
 import { resolveStyle } from "./style"
 
+export interface VuePluginOptions {
+  isProduction?: boolean
+  features?: {
+    /**
+     * Set to `false` to disable Options API support and allow related code in
+     * Vue core to be dropped via dead-code elimination in production builds,
+     * resulting in smaller bundles.
+     * - **default:** `true`
+     */
+    optionsAPI?: boolean
+    /**
+     * Set to `true` to enable devtools support in production builds.
+     * Results in slightly larger bundles.
+     * - **default:** `false`
+     */
+    prodDevtools?: boolean
+    /**
+     * Set to `true` to enable detailed information for hydration mismatch
+     * errors in production builds. Results in slightly larger bundles.
+     * - **default:** `false`
+     */
+    prodHydrationMismatchDetails?: boolean
+  }
+}
+
 validateDependency()
 
-export function pluginVue3(): BunPlugin {
+export function pluginVue3(rawOptions: VuePluginOptions = {}): BunPlugin {
   return {
     name: "vue loader",
     setup(build) {
+      const options = {
+        isProduction: process.env.NODE_ENV === 'production',
+        ...rawOptions
+      }
+
+      // TODO: Seems like define does not work in Bun, check if it is fixed in the future
+      const originalDefine = build.config.define || {}
+      build.config.define = {
+        ...originalDefine,
+        '__VUE_OPTIONS_API__': JSON.stringify(
+          options.features?.optionsAPI ?? 
+          parseDefine(originalDefine.__VUE_OPTIONS_API__) ?? 
+          true
+        ),
+        '__VUE_PROD_DEVTOOLS__': JSON.stringify(
+          options.features?.prodDevtools ?? 
+          parseDefine(originalDefine.__VUE_PROD_DEVTOOLS__) ?? 
+          false
+        ),
+        '__VUE_PROD_HYDRATION_MISMATCH_DETAILS__': JSON.stringify(
+          options.features?.prodHydrationMismatchDetails ?? 
+          parseDefine(originalDefine.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__) ?? 
+          false
+        ),
+      }
+      
       const isProd = process.env.NODE_ENV === "production"
 
       build.onResolve({ filter: /\.vue(\?.*)?$/ }, args => {
@@ -83,6 +134,14 @@ export function pluginVue3(): BunPlugin {
         }
       })
     },
+  }
+}
+
+const parseDefine = (v: unknown) => {
+  try {
+    return typeof v === 'string' ? JSON.parse(v) : v
+  } catch (err) {
+    return v
   }
 }
 

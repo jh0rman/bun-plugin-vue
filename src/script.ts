@@ -34,7 +34,6 @@ export function resolveScript(
       text: e.message
     })
   }
-  console.log('code ->', code)
 
   return {
     code,
