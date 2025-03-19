@@ -1,14 +1,17 @@
 {
   "name": "bun-plugin-vue3",
   "description": "a Bun plugin for Vue 3",
-  "version": "1.0.0-beta.1",
-  "module": "src/index.ts",
+  "version": "1.0.0-beta.2",
   "type": "module",
+  "module": "src/index.ts",
+  "index": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0",
     "vue": ">=3.0.0"
   },
   "author": "qhariN",
