@@ -79,7 +79,7 @@ export function pluginVue3(): BunPlugin {
           contents: styleCode,
           errors,
           resolveDir: dirname,
-          loader: moduleWithNameImport ? 'css' : 'css'
+          loader: moduleWithNameImport ? 'json' : 'css'
         }
       })
     },
