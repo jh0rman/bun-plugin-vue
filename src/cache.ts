@@ -1,4 +1,4 @@
-import { createHash } from 'crypto'
+import { createHash } from 'node:crypto'
 import type { SFCDescriptor } from 'vue/compiler-sfc'
 
 const descriptorCache: Record<string, SFCDescriptor> = {}

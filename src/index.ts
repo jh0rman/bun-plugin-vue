@@ -1,9 +1,7 @@
 import { type BunPlugin } from "bun"
-import { randomBytes as _randomBytes } from 'node:crypto'
-import fs from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { parse as parse2 } from "node:querystring"
-import { resolvePath, validateDependency } from "./util"
+import { parseDefine, resolvePath, validateDependency } from "./util"
 import { loadEntry } from "./entry"
 import { resolveScript } from "./script"
 import { resolveTemplate } from "./template"
@@ -76,7 +74,7 @@ export function pluginVue3(rawOptions: VuePluginOptions = {}): BunPlugin {
 
       build.onLoad({ filter: /\.vue$/ }, async args => {
         const filename = args.path
-        const source = await fs.readFile(filename, 'utf8')
+        const source = await Bun.file(filename).text()
         const { code } = loadEntry(source, filename)
         return {
           contents: code,
@@ -134,14 +132,6 @@ export function pluginVue3(rawOptions: VuePluginOptions = {}): BunPlugin {
         }
       })
     },
-  }
-}
-
-const parseDefine = (v: unknown) => {
-  try {
-    return typeof v === 'string' ? JSON.parse(v) : v
-  } catch (err) {
-    return v
   }
 }
 
