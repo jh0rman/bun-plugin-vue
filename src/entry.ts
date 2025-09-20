@@ -25,7 +25,7 @@ export function loadEntry(source: string, filename: string) {
     const stylePath = `${filename}?type=style&index=${i}`
     if (styleBlock.module) {
       if (!hasModuleInject) {
-        styleImportCode += `\nscript.__cssModules = cssModules = {}`
+        styleImportCode += `\nlet cssModules\nscript.__cssModules = cssModules = {}`
         hasModuleInject = true
       }
       const moduleName = typeof styleBlock.module === 'string' ? styleBlock.module : '$style'

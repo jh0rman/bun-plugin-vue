@@ -125,10 +125,10 @@ export function pluginVue3(rawOptions: VuePluginOptions = {}): BunPlugin {
           isProd
         )
         return {
-          contents: styleCode,
+          contents: `export default ${styleCode}`,
           errors,
           resolveDir: dirname,
-          loader: moduleWithNameImport ? 'json' : 'css'
+          loader: 'js'
         }
       })
     },
