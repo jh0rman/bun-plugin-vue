@@ -1,10 +1,22 @@
 {
   "name": "bun-plugin-vue3",
-  "description": "a Bun plugin for Vue 3",
   "version": "1.0.0-beta.2",
+  "description": "a Bun plugin for Vue 3",
+  "keywords": [
+    "bun",
+    "plugin",
+    "vue"
+  ],
+  "homepage": "https://github.com/jh0rman/bun-plugin-vue#readme",
+  "bugs": "https://github.com/jh0rman/bun-plugin-vue/issues",
+  "license": "MIT",
+  "author": "jh0rman",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jh0rman/bun-plugin-vue.git"
+  },
   "type": "module",
   "module": "src/index.ts",
-  "index": "src/index.ts",
   "exports": {
     ".": "./src/index.ts"
   },
@@ -14,17 +26,5 @@
   "peerDependencies": {
     "vue": ">=3.0.0"
   },
-  "author": "qhariN",
-  "license": "MIT",
-  "homepage": "https://github.com/qhariN/bun-plugin-vue#readme",
-  "bugs": "https://github.com/qhariN/bun-plugin-vue/issues",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/qhariN/bun-plugin-vue.git"
-  },
-  "keywords": [
-    "bun",
-    "plugin",
-    "vue"
-  ]
+  "index": "src/index.ts"
 }
