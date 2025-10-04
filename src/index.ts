@@ -1,4 +1,4 @@
-import { type BunPlugin } from "bun"
+import { plugin, type BunPlugin } from "bun"
 import { resolve } from 'node:path'
 import { parse as parse2 } from "node:querystring"
 import { parseDefine, resolvePath, validateDependency } from "./util"
@@ -44,8 +44,10 @@ export function pluginVue3(rawOptions: VuePluginOptions = {}): BunPlugin {
       }
 
       // TODO: Seems like define does not work in Bun, check if it is fixed in the future
-      const originalDefine = build.config.define || {}
-      build.config.define = {
+      // build.config is undefined in the runtime plugin context (bun test / preload)
+      const isBundlerContext = !!build.config
+      const originalDefine = build.config?.define || {}
+      if (build.config) build.config.define = {
         ...originalDefine,
         '__VUE_OPTIONS_API__': JSON.stringify(
           options.features?.optionsAPI ?? 
@@ -67,6 +69,7 @@ export function pluginVue3(rawOptions: VuePluginOptions = {}): BunPlugin {
       const isProd = process.env.NODE_ENV === "production"
 
       build.onResolve({ filter: /\.vue(\?.*)?$/ }, args => {
+        if (!args.resolveDir) return
         return {
           path: resolve(args.resolveDir, args.path),
         }
@@ -124,15 +127,27 @@ export function pluginVue3(rawOptions: VuePluginOptions = {}): BunPlugin {
           moduleWithNameImport,
           isProd
         )
+        if (moduleWithNameImport) {
+          return {
+            contents: `export default ${styleCode}`,
+            errors,
+            resolveDir: dirname,
+            loader: 'js'
+          }
+        }
+        // In bundler context (Bun.build / bun serve) use the css loader so Bun
+        // bundles the styles natively. In the runtime/test context the css
+        // loader is not supported, so return an empty module (side-effect CSS
+        // has no DOM to inject into in tests anyway).
         return {
-          contents: `export default ${styleCode}`,
+          contents: isBundlerContext ? styleCode : '',
           errors,
           resolveDir: dirname,
-          loader: 'js'
+          loader: isBundlerContext ? 'css' : 'js'
         }
       })
     },
   }
 }
 
-export default pluginVue3()
+export default plugin(pluginVue3())

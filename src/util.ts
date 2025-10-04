@@ -17,7 +17,7 @@ export function resolvePath(filePath: string) {
 export function parseDefine(v: unknown) {
   try {
     return typeof v === 'string' ? JSON.parse(v) : v
-  } catch (err) {
+  } catch {
     return v
   }
 }
