@@ -43,9 +43,29 @@ await Bun.build({
   outdir: './dist',
   plugins: [
     pluginVue3({
-      isProduction: false, // Enable for production builds
+      isProduction: true, // Enable for production builds
     }),
   ],
+})
+```
+
+## Testing
+
+`bun-plugin-vue3` can be used to import `.vue` components in `bun test`. Register it as a preload in [bunfig.toml](https://bun.sh/docs/runtime/bunfig):
+
+```toml
+[test]
+preload = ["bun-plugin-vue3"]
+```
+
+Then import your components directly in tests:
+
+```ts
+import { test, expect } from 'bun:test'
+import MyComponent from './MyComponent.vue'
+
+test('component has a render function', () => {
+  expect(typeof MyComponent.render).toBe('function')
 })
 ```
 
@@ -57,6 +77,12 @@ await Bun.build({
 git clone https://github.com/jh0rman/bun-plugin-vue.git
 cd bun-plugin-vue
 bun install
+```
+
+### Running tests
+
+```bash
+bun test
 ```
 
 ## Contributing
