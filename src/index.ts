@@ -150,4 +150,6 @@ export function pluginVue3(rawOptions: VuePluginOptions = {}): BunPlugin {
   }
 }
 
-export default plugin(pluginVue3())
+const _plugin = pluginVue3()
+plugin(_plugin) // auto-register for [test] preload
+export default _plugin // export BunPlugin for [serve.static] plugins

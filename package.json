@@ -1,6 +1,6 @@
 {
   "name": "bun-plugin-vue3",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "a Bun plugin for Vue 3",
   "keywords": [
     "bun",
